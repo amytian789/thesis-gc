@@ -1,9 +1,10 @@
 setwd("C:/Users/amyti/Documents/Amy - COLLEGE/THESIS/thesis-gc/")
-source("main/GC_engine.R")
-source("main/dist_engine.R")
+source("GC_engine.R")
+source("dist_engine.R")
 
 library(xlsx)
 library(igraph)
+library(clusteval) # for Jaccard index: cluster_similarity
 
 # Read in data.
 g <- 2 # number of sheets in file. Must be an even number
@@ -19,7 +20,7 @@ for (i in seq(1,g,2)) {
     stop(paste("g1 and g2 must have the same # of nodes. Error in sheets",i,"and",i+1))
   }
 
-  # create g1 and g2  
+  # create g1 and g2 as igraphs
   g1 <- igraph::make_empty_graph(n = data[[i]][1], directed = FALSE)
   g1 <- igraph::add_edges(g1, data[[i]][-1])
   g2 <- igraph::make_empty_graph(n = data[[i+1]][1], directed = FALSE)

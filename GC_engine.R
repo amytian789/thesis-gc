@@ -1,43 +1,63 @@
-# g1 and g2 are graphs (an object)
+# g1 and g2 are igraphs
 # gSumm is a vector of strings corresponding to graph summarization methods
-  ### cen = centrality
-  ### ast = assortativity
-  ### com = community
-  ### dis = distance matrix
-  ### eco = edge connectivity
-  ### edh = edge density histogram
+  ### cen_clo = Centrality (closeness)
+  ### ast = Assortativity
+  ### com = Community (infomap / random walk)
+  ### dis = Distance matrix
+  ### eco = Edge connectivity
+  ### edh = Edge density histogram
 # dist is the desired difference function
-GC_engine <- function(g1, g2, gSumm = NULL, dist = "Euclidean", ...){
+GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
   
-#   stopifnot(nrow(X) == length(y), is.matrix(X), is.factor(y), length(levels(y)) == 2)
-#   idx <- which(is.na(y_unlabeled))
-#   stopifnot(length(idx) > 0, all(y[-idx] == y_unlabeled[-idx]), length(y) == length(y_unlabeled),
-#             is.factor(y_unlabeled))
+  stopifnot(igraph::is_igraph(g1), igraph::is_igraph(g2), is.null(gSumm))
+  stopifnot(vcount(g1) == vcount(g2))
   
   diff <- rep(0,length(gSumm))
+  names(diff) <- rep("",length(gSumm))
   i <- 1
   
-  # Centrality
-  if ("cen" %in% gSumm){
-    diff[i] <- function(g1,g2,dist,...)
+  # Centrality (closeness)
+  if ("cen_clo" %in% gSumm){
+    a <- igraph::centr_clo(g1)$centralization
+    b <- igraph::centr_clo(g2)$centralization
+    
+    diff[i] <- dist_engine(a,b,dist)
+    names(diff)[i] <- "cen"
     i <- i + 1
   }
   
   # Assortativity
   if ("ast" %in% gSumm){
-    diff[i] <- function(g1,g2,dist,...)
+    a <- igraph::assortativity_degree(g1)
+    b <- igraph::assortativity_degree(g2)
+    
+    diff[i] <- dist_engine(a,b,dist)
+    names(diff)[i] <- "ast"
     i <- i + 1
   }
   
-  # Community
+  # Community (random walk? or infomap)
   if ("com" %in% gSumm){
-    diff[i] <- function(g1,g2,dist,...)
+    diff[i] <- dist_engine(a,b,dist)
+    names(diff)[i] <- "com"
     i <- i + 1
   }
   
   # Distance matrix 
   if ("dis" %in% gSumm){
-    diff[i] <- function(g1,g2,dist,...)
+    a <- distances(g1)
+    b <- distances(g2)
+    
+    # change from matrix -> vector for distance computation (ordered by column)
+    # keep only 1 side of the matrix (both sides are the same)
+    # don't keep the values in the middle (since it's the same node)
+    a[a == Inf] <- 0
+    a <- a[upper.tri(a)]
+    b[b == Inf] <- 0
+    b <- b[upper.tri(b)]
+    
+    diff[i] <- dist_engine(a,b,dist)
+    names(diff)[i] <- "dis"
     i <- i + 1
   }
   
@@ -51,12 +71,16 @@ GC_engine <- function(g1, g2, gSumm = NULL, dist = "Euclidean", ...){
     } else b <- 0
     
     diff[i] <- dist_engine(a,b,dist)
+    names(diff)[i] <- "eco"
     i <- i + 1
   }
   
   # Edge density histogram
   if ("edh" %in% gSumm){
-    diff[i] <- function(g1,g2,dist,...)
+    
+    
+    diff[i] <- dist_engine(a,b,dist)
+    names(diff)[i] <- "edh"
     i <- i + 1
   }
   
