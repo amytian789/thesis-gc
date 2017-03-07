@@ -52,9 +52,9 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
     # keep only 1 side of the matrix (both sides are the same)
     # don't keep the values in the middle (since it's the same node)
     a[a == Inf] <- 0
-    a <- a[upper.tri(a)]
+    a <- a[upper.tri(a)] / (igraph::gorder(g1)-1)
     b[b == Inf] <- 0
-    b <- b[upper.tri(b)]
+    b <- b[upper.tri(b)] / (igraph::gorder(g2)-1)
     
     diff[i] <- dist_engine(a,b,dist)
     names(diff)[i] <- "dis"
@@ -77,7 +77,11 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
   
   # Edge density histogram
   if ("edh" %in% gSumm){
-    
+    # histograms should be on the same scale. 
+    # Use Freedman-Diaconis rule to determine bin width
+    bw <- 2 * stats::IQR(igraph::degree(g1)) / igraph::gorder(g1)^(1/3)
+    a <- graphics::hist(igraph::degree(g1),plot=FALSE,breaks=seq(0,gorder(g1),by=bw))$counts / igraph::gorder(g1)
+    b <- graphics::hist(igraph::degree(g2),plot=FALSE,breaks=seq(0,gorder(g2),by=bw))$counts / igraph::gorder(g2)
     
     diff[i] <- dist_engine(a,b,dist)
     names(diff)[i] <- "edh"
