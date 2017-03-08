@@ -1,8 +1,11 @@
 # g1 and g2 are igraphs
 # gSumm is a vector of strings corresponding to graph summarization methods
+  ### cen_deg = Centrality (degree)
   ### cen_clo = Centrality (closeness)
+  ### cen_bet = Centrality (betweenness)
   ### ast = Assortativity
-  ### com = Community (infomap / random walk)
+  ### com_rw = Community (random walk)
+  ### com_im = Community (info map)
   ### dis = Distance matrix
   ### eco = Edge connectivity
   ### edh = Edge density histogram
@@ -16,13 +19,33 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
   names(diff) <- rep("",length(gSumm))
   i <- 1
   
+  # Centrality (degree)
+  if ("cen_deg" %in% gSumm){
+    a <- igraph::centr_degree(g1)$centralization
+    b <- igraph::centr_degree(g2)$centralization
+    
+    diff[i] <- dist_engine(a,b,dist)
+    names(diff)[i] <- "cen_deg"
+    i <- i + 1
+  }
+  
   # Centrality (closeness)
   if ("cen_clo" %in% gSumm){
     a <- igraph::centr_clo(g1)$centralization
     b <- igraph::centr_clo(g2)$centralization
     
     diff[i] <- dist_engine(a,b,dist)
-    names(diff)[i] <- "cen"
+    names(diff)[i] <- "cen_clo"
+    i <- i + 1
+  }
+  
+  # Centrality (betweenness)
+  if ("cen_bet" %in% gSumm){
+    a <- igraph::centr_betw(g1)$centralization
+    b <- igraph::centr_betw(g2)$centralization
+    
+    diff[i] <- dist_engine(a,b,dist)
+    names(diff)[i] <- "cen_bet"
     i <- i + 1
   }
   
@@ -36,10 +59,10 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
     i <- i + 1
   }
   
-  # Community (random walk? or infomap)
-  if ("com" %in% gSumm){
+  # Community (random walk)
+  if ("com_rw" %in% gSumm){
     diff[i] <- dist_engine(a,b,dist)
-    names(diff)[i] <- "com"
+    names(diff)[i] <- "com_rw"
     i <- i + 1
   }
   
