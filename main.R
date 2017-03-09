@@ -51,3 +51,50 @@ for (i in seq(1,g,2)) {
   # Call the engine to compute difference between g1 and g2
   gc[[(i+1)/2]] <- GC_engine(g1=g1,g2=g2,gSumm=gSumm,distf=distf)
 }
+
+
+
+
+
+################################## Select the most similar graph pair
+
+# Find the next "best" canditate
+best_c <- function(base,gc){
+  for (i in 1:length(gc)){
+    if (i != base){
+      if (sum(gc[[base]] < gc[[i]]) < sum(gc[[base]] > gc[[i]])){
+        return( i )
+      } else if (sum(gc[[base]] < gc[[i]]) > sum(gc[[base]] > gc[[i]])){
+        # do nothing since the base is better
+      } else{
+        return( sample(c(base,i),1) )
+      }
+    }
+  }
+  return( base )
+}
+
+idx <- 1 # start w/ index 1 and compare to everything else
+old_idx <- 0
+while (old_idx != idx){
+  old_idx <- idx
+  idx <- best_c(idx,gc)
+  #print(paste(old_idx,idx))
+}
+
+
+
+
+
+
+# ll <- apply(combn(seq_along(gc),2), 2, function(n) max(sum(gc[[n[1]]] < gc[[n[2]]]), sum(gc[[n[1]]] > gc[[n[2]]])))
+# idx <- which(ll==max(ll))
+# if (length(idx) > 1) idx <- sample(idx,1)
+# n <- combn(seq_along(gc),2)[,idx] # index in list of candidate "best" pair
+# if (sum(gc[[n[1]]]<gc[[n[2]]]) < sum(gc[[n[1]]]>gc[[n[2]]])){
+#   n[2]
+# } else if (sum(gc[[n[1]]]<gc[[n[2]]]) > sum(gc[[n[1]]]>gc[[n[2]]])) {
+#   n[1]
+# } else {
+#   sample(n,1)
+# }
