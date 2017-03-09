@@ -1,6 +1,7 @@
 setwd("C:/Users/amyti/Documents/Amy - COLLEGE/THESIS/thesis-gc/")
 source("GC_engine.R")
 source("dist_engine.R")
+source("GC_selection.R")
 
 library(xlsx)
 library(igraph)
@@ -58,30 +59,8 @@ for (i in seq(1,g,2)) {
 
 ################################## Select the most similar graph pair
 
-# Find the next "best" canditate
-best_c <- function(base,gc){
-  for (i in 1:length(gc)){
-    if (i != base){
-      if (sum(gc[[base]] < gc[[i]]) < sum(gc[[base]] > gc[[i]])){
-        return( i )
-      } else if (sum(gc[[base]] < gc[[i]]) > sum(gc[[base]] > gc[[i]])){
-        # do nothing since the base is better
-      } else{
-        return( sample(c(base,i),1) )
-      }
-    }
-  }
-  return( base )
-}
-
-idx <- 1 # start w/ index 1 and compare to everything else
-old_idx <- 0
-while (old_idx != idx){
-  old_idx <- idx
-  idx <- best_c(idx,gc)
-  #print(paste(old_idx,idx))
-}
-
+idx <- GC_selection(gc = gc, base = 1)
+idx
 
 
 
