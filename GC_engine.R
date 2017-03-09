@@ -5,15 +5,17 @@
   ### cen_bet = Centrality (betweenness)
   ### ast = Assortativity
   ### com_rw = Community (random walk)
-  ### com_im = Community (info map)
-  ### dis = Distance matrix
+  ### com_im = Community (infomap)
+  ### com_bet = Community (betweenness)
+  ### dis = distance matrix
   ### eco = Edge connectivity
   ### edh = Edge density histogram
-# dist is the desired difference function
-GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
+# distf is the desired difference function
+
+GC_engine <- function(g1, g2, gSumm, distf = "euclidean", ...){
   
-  stopifnot(igraph::is_igraph(g1), igraph::is_igraph(g2), is.null(gSumm))
-  stopifnot(vcount(g1) == vcount(g2))
+  stopifnot(igraph::is_igraph(g1), igraph::is_igraph(g2), 
+            igraph::gorder(g1) == igraph::gorder(g2),!is.null(gSumm))
   
   diff <- rep(0,length(gSumm))
   names(diff) <- rep("",length(gSumm))
@@ -24,7 +26,7 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
     a <- igraph::centr_degree(g1)$centralization
     b <- igraph::centr_degree(g2)$centralization
     
-    diff[i] <- dist_engine(a,b,dist)
+    diff[i] <- dist_engine(a,b,distf)
     names(diff)[i] <- "cen_deg"
     i <- i + 1
   }
@@ -34,7 +36,7 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
     a <- igraph::centr_clo(g1)$centralization
     b <- igraph::centr_clo(g2)$centralization
     
-    diff[i] <- dist_engine(a,b,dist)
+    diff[i] <- dist_engine(a,b,distf)
     names(diff)[i] <- "cen_clo"
     i <- i + 1
   }
@@ -44,7 +46,7 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
     a <- igraph::centr_betw(g1)$centralization
     b <- igraph::centr_betw(g2)$centralization
     
-    diff[i] <- dist_engine(a,b,dist)
+    diff[i] <- dist_engine(a,b,distf)
     names(diff)[i] <- "cen_bet"
     i <- i + 1
   }
@@ -54,19 +56,45 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
     a <- igraph::assortativity_degree(g1)
     b <- igraph::assortativity_degree(g2)
     
-    diff[i] <- dist_engine(a,b,dist)
+    if (is.nan(a)) a <- 0
+    if (is.nan(b)) b <- 0
+    
+    diff[i] <- dist_engine(a,b,distf)
     names(diff)[i] <- "ast"
     i <- i + 1
   }
   
   # Community (random walk)
   if ("com_rw" %in% gSumm){
-    diff[i] <- dist_engine(a,b,dist)
+    a <- igraph::membership(igraph::cluster_walktrap(g1,steps=igraph::gorder(g1)/2))
+    b <- igraph::membership(igraph::cluster_walktrap(g2,steps=igraph::gorder(g2)/2))
+
+    diff[i] <- dist_engine(a,b,dist="jaccard")
     names(diff)[i] <- "com_rw"
     i <- i + 1
   }
   
-  # Distance matrix 
+  # Community (infomap)
+  if ("com_im" %in% gSumm){
+    a <- igraph::membership(igraph::cluster_infomap(g1))
+    b <- igraph::membership(igraph::cluster_infomap(g2))
+    
+    diff[i] <- dist_engine(a,b,dist="jaccard")
+    names(diff)[i] <- "com_im"
+    i <- i + 1
+  }
+  
+  # Community (betweenness)
+  if ("com_bet" %in% gSumm){
+    a <- igraph::membership(igraph::cluster_edge_betweenness(g1))
+    b <- igraph::membership(igraph::cluster_edge_betweenness(g2))
+    
+    diff[i] <- dist_engine(a,b,dist="jaccard")
+    names(diff)[i] <- "com_bet"
+    i <- i + 1
+  }
+  
+  # distance matrix 
   if ("dis" %in% gSumm){
     a <- distances(g1)
     b <- distances(g2)
@@ -79,7 +107,7 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
     b[b == Inf] <- 0
     b <- b[upper.tri(b)] / (igraph::gorder(g2)-1)
     
-    diff[i] <- dist_engine(a,b,dist)
+    diff[i] <- dist_engine(a,b,distf)
     names(diff)[i] <- "dis"
     i <- i + 1
   }
@@ -93,7 +121,7 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
       b <- igraph::edge_connectivity(g2) / min(igraph::degree(g2))
     } else b <- 0
     
-    diff[i] <- dist_engine(a,b,dist)
+    diff[i] <- dist_engine(a,b,distf)
     names(diff)[i] <- "eco"
     i <- i + 1
   }
@@ -106,7 +134,7 @@ GC_engine <- function(g1, g2, gSumm, dist = "Euclidean", ...){
     a <- graphics::hist(igraph::degree(g1),plot=FALSE,breaks=seq(0,gorder(g1),by=bw))$counts / igraph::gorder(g1)
     b <- graphics::hist(igraph::degree(g2),plot=FALSE,breaks=seq(0,gorder(g2),by=bw))$counts / igraph::gorder(g2)
     
-    diff[i] <- dist_engine(a,b,dist)
+    diff[i] <- dist_engine(a,b,distf)
     names(diff)[i] <- "edh"
     i <- i + 1
   }
