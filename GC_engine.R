@@ -130,9 +130,10 @@ GC_engine <- function(g1, g2, gSumm, distf = "euclidean", ...){
   if ("edh" %in% gSumm){
     # histograms should be on the same scale. 
     # Use Freedman-Diaconis rule to determine bin width
+    dd <- max(igraph::degree(g1),igraph::degree(g2))
     bw <- 2 * stats::IQR(igraph::degree(g1)) / igraph::gorder(g1)^(1/3)
-    a <- graphics::hist(igraph::degree(g1),plot=FALSE,breaks=seq(0,gorder(g1),by=bw))$counts / igraph::gorder(g1)
-    b <- graphics::hist(igraph::degree(g2),plot=FALSE,breaks=seq(0,gorder(g2),by=bw))$counts / igraph::gorder(g2)
+    a <- graphics::hist(igraph::degree(g1),plot=FALSE,breaks=seq(0,dd+bw,by=bw))$counts / igraph::gorder(g1)
+    b <- graphics::hist(igraph::degree(g2),plot=FALSE,breaks=seq(0,dd+bw,by=bw))$counts / igraph::gorder(g2)
     
     diff[i] <- dist_engine(a,b,distf)
     names(diff)[i] <- "edh"
