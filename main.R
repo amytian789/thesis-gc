@@ -37,7 +37,7 @@ gSumm <- c("cen_deg","cen_clo","cen_bet","ast",
            "com_rw","com_im","com_bet","dis","eco","edh")
 distf <- "l2"
 
-idx <- rep(0,1000)
+msg <- rep(0,1000)
 for (i in 1:1000) {
   # g1: randomly swap 20 edges. Weight of each node is proportional to its degree
   g1 <- bg 
@@ -51,7 +51,7 @@ for (i in 1:1000) {
   }
   
   # g2: randomly swap 100 edges. Weight of each node is proportional to its degree
-  g2 <- bg 
+  g2 <- bg
   set.seed(i)
   for (j in 1:100) {
     idx <- sample(igraph::as_edgelist(g2),1)
@@ -67,9 +67,9 @@ for (i in 1:1000) {
   gc[[2]] <- GC_engine(g1=bg,g2=g2,gSumm=gSumm,distf=distf)
   
   # Select the most similar graph pair
-  idx[i] <- GC_selection(gc = gc, base = 1)
+  msg[i] <- GC_selection(gc = gc, base = 1)
 }
-p1 <- length(which(idx == 1)) / length(idx)
-p2 <- length(which(idx == 2)) / length(idx)
+p1 <- length(which(msg == 1)) / length(msg)
+p2 <- length(which(msg == 2)) / length(msg)
 cat("Prob. of selecting (bg,g1):",p1,"\nProb. of selecting (bg,g2):", p2)
 
