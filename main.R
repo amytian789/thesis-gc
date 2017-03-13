@@ -50,7 +50,7 @@ for (i in 1:1000) {
     nva <- sample(seq(1,length(prob),1),1)
     nvb <- randomdraw(1, prob)
     # make sure edges are not repeated
-    while (g1[nva,nvb] == 1) nvb <- randomdraw(1,prob)
+    while (g1[nva,nvb] == 1 & nva != nvb) nvb <- randomdraw(1,prob)
     g1 <- igraph::add_edges(g1, c(nva,nvb))
   }
   
@@ -63,7 +63,7 @@ for (i in 1:1000) {
     nva <- sample(seq(1,length(prob),1),1)
     nvb <- randomdraw(1, prob)
     # make sure edges are not repeated
-    while (g2[nva,nvb] == 1) nvb <- randomdraw(1,prob)
+    while (g2[nva,nvb] == 1 & nva != nvb) nvb <- randomdraw(1,prob)
     g2 <- igraph::add_edges(g2, c(nva,nvb))
   }
   
