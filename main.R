@@ -80,3 +80,13 @@ p1 <- length(which(msg == 1)) / length(msg)
 p2 <- length(which(msg == 2)) / length(msg)
 cat("Prob. of selecting (bg,g1):",p1,"\nProb. of selecting (bg,g2):", p2)
 
+################################## Plot simulation graphs
+
+bg$layout <- layout_in_circle # base graph
+g1$layout <- layout_in_circle # from trial 1000 (seed = 1000)
+g2$layout <- layout_in_circle # from trial 1000 (seed = 1000)
+
+par(mfrow=c(1,3))
+plot(bg)
+plot(g1)
+plot(g2)

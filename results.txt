@@ -1,6 +1,8 @@
-Runtime: about x - 13 minutes
+Runtime: about 3 - 9 minutes
 (depends on swap size)
 
-20 vs 100 swaps: 0.845 vs 0.155
-20 vs 21 swaps: 0.543 vs 0.457
-20 vs 20 swaps: 0.51 vs 0.49
+Base Graph: 20 vertices, 50 edges
+
+10 vs 50 swaps: 0.885 vs 0.115
+10 vs 11 swaps: 0.59 vs 0.41
+10 vs 10 swaps: 0.541 vs 0.459
