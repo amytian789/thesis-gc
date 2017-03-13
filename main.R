@@ -1,4 +1,4 @@
-#setwd("C:/Users/amyti/Documents/Amy - COLLEGE/THESIS/thesis-gc/")
+setwd("C:/Users/amyti/Documents/Amy - COLLEGE/THESIS/thesis-gc/")
 source("GC_engine.R")
 source("dist_engine.R")
 source("GC_selection.R")
@@ -9,7 +9,7 @@ library(clusteval)
 ################################## Random sample given PDF
 
 randomdraw <- function(n, prob){
-  if(sum(prob) != 1 | length(which(prob<0)) > 0) stop("Probability must be between 0 and 1")
+  if(round(sum(prob),1) != 1 | length(which(prob<0)) > 0) stop("Probability must be between 0 and 1")
   
   runningsum <- 0
   s <- runif(n)
@@ -29,7 +29,7 @@ randomdraw <- function(n, prob){
 
 # Create base graph
 set.seed(10)
-bg <- igraph::sample_gnm(20, 100)
+bg <- igraph::sample_gnm(20, 50)
 bg_e <- igraph::as_edgelist(bg)
 
 # Setting parameters
@@ -47,8 +47,11 @@ for (i in 1:1000) {
     idx <- sample(igraph::as_edgelist(g1),1)
     g1 <- igraph::delete_edges(g1,idx)
     prob <- igraph::degree(g1) / sum(igraph::degree(g1))
-    nv <- randomdraw(2, prob)
-    g1 <- igraph::add_edges(g1, nv)
+    nva <- sample(seq(1,length(prob),1),1)
+    nvb <- randomdraw(1, prob)
+    # make sure edges are not repeated
+    while (g1[nva,nvb] == 1) nvb <- randomdraw(1,prob)
+    g1 <- igraph::add_edges(g1, c(nva,nvb))
   }
   
   # g2: randomly swap 100 edges. Weight of each node is proportional to its degree
@@ -57,8 +60,11 @@ for (i in 1:1000) {
     idx <- sample(igraph::as_edgelist(g2),1)
     g2 <- igraph::delete_edges(g2,idx)
     prob <- igraph::degree(g2) / sum(igraph::degree(g2))
-    nv <- randomdraw(2, prob)
-    g2 <- igraph::add_edges(g2, nv)
+    nva <- sample(seq(1,length(prob),1),1)
+    nvb <- randomdraw(1, prob)
+    # make sure edges are not repeated
+    while (g2[nva,nvb] == 1) nvb <- randomdraw(1,prob)
+    g2 <- igraph::add_edges(g2, c(nva,nvb))
   }
   
   # Compute difference between (bg,g1), (bg,g2)
