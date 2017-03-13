@@ -1,6 +1,6 @@
-Runtime: about 4 - 13 minutes
+Runtime: about x - 13 minutes
 (depends on swap size)
 
-20 vs 100 swaps: 0.82 vs 0.18
+20 vs 100 swaps: 0.845 vs 0.155
 20 vs 21 swaps: 0.543 vs 0.457
 20 vs 20 swaps: 0.51 vs 0.49
