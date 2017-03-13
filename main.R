@@ -39,9 +39,10 @@ distf <- "l2"
 
 msg <- rep(0,1000)
 for (i in 1:1000) {
-  # g1: randomly swap 20 edges. Weight of each node is proportional to its degree
-  g1 <- bg 
   set.seed(i)
+  
+  # g1: randomly swap 20 edges. Weight of each node is proportional to its degree
+  g1 <- bg
   for (j in 1:20) {
     idx <- sample(igraph::as_edgelist(g1),1)
     g1 <- igraph::delete_edges(g1,idx)
@@ -52,7 +53,6 @@ for (i in 1:1000) {
   
   # g2: randomly swap 100 edges. Weight of each node is proportional to its degree
   g2 <- bg
-  set.seed(i)
   for (j in 1:100) {
     idx <- sample(igraph::as_edgelist(g2),1)
     g2 <- igraph::delete_edges(g2,idx)

@@ -1,0 +1,6 @@
+20 vs 100 swaps: 0.998 vs 0.002
+20 vs 100 swaps: 0.999 vs 0.001 (no seeding)
+20 vs 21 swaps: 0.57 vs 0.43
+20 vs 21 swaps: 0.55 vs 0.45 (no seeding)
+20 vs 20 swaps: 0.526 vs 0.474
+20 vs 20 swaps: 0.501 vs 0.499 (no seeding)
