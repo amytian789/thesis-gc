@@ -1,4 +1,4 @@
-# Engine to call various distance computation methods
+######## Engine to call various distance computation methods
 dist_engine <- function(a,b,dist = "euclidean", ...){
   switch(dist,
          euclidean=dist_euc(a,b),

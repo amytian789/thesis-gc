@@ -20,6 +20,7 @@ GC_selection <- function(gc, base = 1){
 
 # Select the next idx candidate given current best candidate
 best_c <- function(gc, cand){
+  
   for (i in 1:length(gc)){
     if (i != cand){
       if (sum(gc[[cand]] < gc[[i]]) < sum(gc[[cand]] > gc[[i]])){

@@ -15,7 +15,8 @@
 GC_engine <- function(g1, g2, gSumm, distf = "euclidean", ...){
   
   stopifnot(igraph::is_igraph(g1), igraph::is_igraph(g2), 
-            igraph::gorder(g1) == igraph::gorder(g2),!is.null(gSumm))
+            igraph::gorder(g1) == igraph::gorder(g2),
+            !is.null(gSumm))
   
   diff <- rep(0,length(gSumm))
   names(diff) <- rep("",length(gSumm))
@@ -66,8 +67,10 @@ GC_engine <- function(g1, g2, gSumm, distf = "euclidean", ...){
   
   # Community (random walk)
   if ("com_rw" %in% gSumm){
-    a <- igraph::membership(igraph::cluster_walktrap(g1,steps=igraph::gorder(g1)/2))
-    b <- igraph::membership(igraph::cluster_walktrap(g2,steps=igraph::gorder(g2)/2))
+    a <- igraph::membership(igraph::cluster_walktrap(
+      g1,steps=igraph::gorder(g1)/2))
+    b <- igraph::membership(igraph::cluster_walktrap(
+      g2,steps=igraph::gorder(g2)/2))
 
     diff[i] <- dist_engine(a,b,dist="jaccard")
     names(diff)[i] <- "com_rw"
@@ -99,7 +102,7 @@ GC_engine <- function(g1, g2, gSumm, distf = "euclidean", ...){
     a <- distances(g1)
     b <- distances(g2)
     
-    # change from matrix -> vector for distance computation (ordered by column)
+    # change from matrix -> vector for distance computation (by column)
     # keep only 1 side of the matrix (both sides are the same)
     # don't keep the values in the middle (since it's the same node)
     a[a == Inf] <- 0
@@ -132,8 +135,10 @@ GC_engine <- function(g1, g2, gSumm, distf = "euclidean", ...){
     # Use Freedman-Diaconis rule to determine bin width
     dd <- max(igraph::degree(g1),igraph::degree(g2))
     bw <- 2 * stats::IQR(igraph::degree(g1)) / igraph::gorder(g1)^(1/3)
-    a <- graphics::hist(igraph::degree(g1),plot=FALSE,breaks=seq(0,dd+bw,by=bw))$counts / igraph::gorder(g1)
-    b <- graphics::hist(igraph::degree(g2),plot=FALSE,breaks=seq(0,dd+bw,by=bw))$counts / igraph::gorder(g2)
+    a <- graphics::hist(igraph::degree(g1),plot=FALSE,
+                        breaks=seq(0,dd+bw,by=bw))$counts / igraph::gorder(g1)
+    b <- graphics::hist(igraph::degree(g2),plot=FALSE,
+                        breaks=seq(0,dd+bw,by=bw))$counts / igraph::gorder(g2)
     
     diff[i] <- dist_engine(a,b,distf)
     names(diff)[i] <- "edh"

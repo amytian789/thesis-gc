@@ -9,7 +9,8 @@ library(clusteval)
 ################################## Random sample given PDF
 
 randomdraw <- function(n, prob){
-  if(round(sum(prob),1) != 1 | length(which(prob<0)) > 0) stop("Probability must be between 0 and 1")
+  if(round(sum(prob),1) != 1 | length(which(prob<0)) > 0) 
+    stop("Probability must be between 0 and 1")
   
   runningsum <- 0
   s <- runif(n)
@@ -42,7 +43,8 @@ msg <- rep(0,1000)
 for (i in 1:1000) {
   set.seed(i)
   
-  # g1: randomly swap 20% edges. Weight of each node is proportional to its degree
+  # g1: randomly swap 20% edges. 
+  # Weight of each node is proportional to its degree
   g1 <- bg
   for (j in 1:(ss/5)) {
     idx <- sample(igraph::as_edgelist(g1),1)
@@ -55,7 +57,8 @@ for (i in 1:1000) {
     g1 <- igraph::add_edges(g1, c(nva,nvb))
   }
   
-  # g2: randomly swap 100% edges. Weight of each node is proportional to its degree
+  # g2: randomly swap 100% edges. 
+  # Weight of each node is proportional to its degree
   g2 <- bg
   for (j in 1:ss) {
     idx <- sample(igraph::as_edgelist(g2),1)
