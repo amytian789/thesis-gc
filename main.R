@@ -29,7 +29,7 @@ randomdraw <- function(n, prob){
 ################################## Run simulations
 
 # Create base graph
-set.seed(10)
+set.seed(j)
 ss <- 50 # desired sample size (# of edges)
 bg <- igraph::sample_gnm(20, ss)
 bg_e <- igraph::as_edgelist(bg)
@@ -60,7 +60,7 @@ for (i in 1:1000) {
   # g2: randomly swap 100% edges. 
   # Weight of each node is proportional to its degree
   g2 <- bg
-  for (j in 1:ss) {
+  for (j in 1:(ss)) {
     idx <- sample(igraph::as_edgelist(g2),1)
     g2 <- igraph::delete_edges(g2,idx)
     prob <- igraph::degree(g2) / sum(igraph::degree(g2))
