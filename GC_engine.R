@@ -97,7 +97,7 @@ GC_engine <- function(g1, g2, gSumm, distf = "euclidean", ...){
     i <- i + 1
   }
   
-  # distance matrix 
+  # Distance matrix 
   if ("dis" %in% gSumm){
     a <- distances(g1)
     b <- distances(g2)
@@ -106,11 +106,12 @@ GC_engine <- function(g1, g2, gSumm, distf = "euclidean", ...){
     # keep only 1 side of the matrix (both sides are the same)
     # don't keep the values in the middle (since it's the same node)
     a[a == Inf] <- 0
-    a <- a[upper.tri(a)] / (igraph::gorder(g1)-1)
+    a <- a[upper.tri(a)]
     b[b == Inf] <- 0
-    b <- b[upper.tri(b)] / (igraph::gorder(g2)-1)
+    b <- b[upper.tri(b)]
     
-    diff[i] <- dist_engine(a,b,distf)
+    diff[i] <- dist_engine(a,b,distf) / (dist_engine(
+      0,igraph::gorder(g1)-1,distf) * length(a))
     names(diff)[i] <- "dis"
     i <- i + 1
   }

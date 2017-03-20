@@ -51,16 +51,24 @@ for (i in seq(1,g,2)) {
   
   # Call the engine to compute difference between g1 and g2
   gc[[(i+1)/2]] <- GC_engine(g1=g1,g2=g2,gSumm=gSumm,distf=distf)
+  
+  # Plot
+  g1$layout <- layout_in_circle
+  g2$layout <- layout_in_circle
+  par(mfrow=c(1,2))
+  plot(g1)
+  plot(g2)
 }
 
+gc
 
 
 
 
 ################################## Select the most similar graph pair
 
-idx <- GC_selection(gc = gc, base = 1)
-idx
+# idx <- GC_selection(gc = gc, base = 1)
+# idx
 
 
 
