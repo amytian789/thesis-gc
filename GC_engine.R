@@ -111,7 +111,8 @@ GC_engine <- function(g1, g2, gSumm, distf = "euclidean", ...){
     b <- b[upper.tri(b)]
     
     diff[i] <- dist_engine(a,b,distf) / dist_engine(
-      rep(0,igraph::gorder(g1)-1),seq(1,igraph::gorder(g1)-1,by=1),distf)
+      rep(0,igraph::gorder(g1)-1),
+      seq(1,igraph::gorder(g1)-1,by=1),distf)
     names(diff)[i] <- "dis"
     i <- i + 1
   }
